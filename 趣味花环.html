@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>✨ 魔法花环工坊 · 百变形状秀 ✨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(145deg, #fdf6e3 0%, #ffe0c4 100%);
+            font-family: 'Segoe UI', 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Poppins', cursive, sans-serif;
+            min-height: 100vh;
+            padding: 28px 20px;
+        }
+
+        .festival-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255,248,235,0.92);
+            border-radius: 80px;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.15), 0 0 0 2px #ffeba7;
+            backdrop-filter: blur(2px);
+            overflow: hidden;
+        }
+
+        /* 左右分屏：左侧代码区占1/5，右侧花环区占4/5 */
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 4fr;  /* 左侧20%，右侧80% */
+            gap: 0;
+            min-height: 650px;
+        }
+
+        .code-area {
+            background: #1e2a28;
+            background-image: radial-gradient(circle at 15% 25%, rgba(120, 180, 100, 0.15) 2%, transparent 2.5%);
+            background-size: 32px 32px;
+            padding: 20px 14px;
+            border-right: 5px solid #ffcf8a;
+            box-shadow: 8px 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            border-bottom: 3px dotted #ffbc6e;
+            padding-bottom: 8px;
+        }
+
+        .code-header h2 {
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #ffe5b4, #ffaa55);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .badge {
+            background: #ffaa55;
+            padding: 3px 10px;
+            border-radius: 60px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: #2c1a09;
+            box-shadow: inset 0 -1px 0 #dc8c2c;
+        }
+
+        pre {
+            background: #0f1c18;
+            padding: 12px;
+            border-radius: 32px;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            line-height: 1.4;
+            color: #c7f0dd;
+            box-shadow: inset 0 0 0 2px #306b50, 0 8px 18px rgba(0,0,0,0.3);
+            flex: 1;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-note {
+            margin-top: 12px;
+            font-size: 0.65rem;
+            color: #fee3b5;
+            background: #2c423a;
+            padding: 6px 10px;
+            border-radius: 40px;
+            text-align: center;
+        }
+
+        .wreath-area {
+            background: #fff6ea;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .canvas-wrapper {
+            background: #ffe5ca;
+            border-radius: 68px;
+            padding: 12px;
+            box-shadow: 0 18px 30px rgba(100, 50, 15, 0.2), inset 0 1px 4px #ffffdd;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 56px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+            background: #fffcf0;
+            width: 100%;
+            height: auto;
+            cursor: crosshair;
+            transition: transform 0.08s ease;
+        }
+
+        canvas:active {
+            transform: scale(0.99);
+        }
+
+        .control-panel {
+            background: #faefdb;
+            border-radius: 56px;
+            padding: 18px 28px;
+            width: 100%;
+            box-shadow: 0 8px 0 #cb8b4a;
+            border: 1px solid #ffd89c;
+        }
+
+        .control-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #aa571e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .slider-item {
+            flex: 1;
+            min-width: 130px;
+            background: #fff7e8;
+            padding: 8px 14px;
+            border-radius: 48px;
+            box-shadow: inset 0 1px 2px #f5cf9b;
+        }
+
+        .slider-item label {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #7b3f00;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            accent-color: #f7a53a;
+        }
+
+        .value-display {
+            font-size: 0.7rem;
+            background: #f7d9a0;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 30px;
+            margin-left: 6px;
+        }
+
+        .shape-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 12px 0 8px;
+        }
+        
+        .shape-btn {
+            background: #ffddb0;
+            border: none;
+            font-family: inherit;
+            font-weight: bold;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: 0.05s linear;
+            color: #7a3f12;
+        }
+        
+        .shape-btn.active-shape {
+            background: #ffaa55;
+            color: white;
+            box-shadow: inset 0 0 0 1px #ffe0a3, 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .shape-btn:active {
+            transform: scale(0.96);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .magic-btn {
+            background: linear-gradient(135deg, #ffbb66, #ff9f3a);
+            border: none;
+            font-family: inherit;
+            font-weight: bold;
+            padding: 6px 18px;
+            border-radius: 48px;
+            color: #3a260f;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #aa621f;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.05s linear;
+        }
+
+        .magic-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #aa621f;
+        }
+
+        .active-magic {
+            background: linear-gradient(135deg, #ff88aa, #ff5e7c);
+            box-shadow: 0 3px 0 #9a3e4a;
+            color: white;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            color: #bc8755;
+            padding-bottom: 12px;
+        }
+
+        @media (max-width: 780px) {
+            .split-layout {
+                grid-template-columns: 1fr;  /* 移动端恢复全宽 */
+            }
+            .code-area {
+                border-right: none;
+                border-bottom: 5px solid #ffcd94;
+            }
+            body {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="festival-container">
+    <div class="split-layout">
+        <div class="code-area">
+            <div class="code-header">
+                <h2>✨ 魔法书 ✨</h2>
+                <div class="badge">🎭 百变形状</div>
+            </div>
+            <pre id="codeDisplay">// 魔法花环 · 形状变变变！
+// 点击按钮改变形状
+// 旋转+彩虹流光更惊艳 ✨</pre>
+            <div class="code-note">
+                💡 心形+旋转+彩虹→梦幻<br>
+                ✨ 点击画布洒星光
+            </div>
+        </div>
+        <div class="wreath-area">
+            <div class="canvas-wrapper">
+                <canvas id="wreathCanvas" width="550" height="550" style="width:100%; height:auto; max-width:550px; aspect-ratio:1/1"></canvas>
+            </div>
+            <div class="control-panel">
+                <div class="control-title">
+                    🧙 花艺调节器 & 百变形状 🧙
+                </div>
+                <div class="slider-group">
+                    <div class="slider-item">
+                        <label>🌸 花朵数量</label>
+                        <input type="range" id="flowerCountSlider" min="6" max="28" step="1" value="14">
+                        <span id="flowerCountVal" class="value-display">14朵</span>
+                    </div>
+                    <div class="slider-item">
+                        <label>💠 花环尺寸</label>
+                        <input type="range" id="ringRadiusSlider" min="110" max="230" step="2" value="185">
+                        <span id="ringRadiusVal" class="value-display">185px</span>
+                    </div>
+                    <div class="slider-item">
+                        <label>⭐ 花朵大小</label>
+                        <input type="range" id="flowerSizeSlider" min="14" max="34" step="1" value="22">
+                        <span id="flowerSizeVal" class="value-display">22px</span>
+                    </div>
+                </div>
+                
+                <div class="shape-group">
+                    <button data-shape="circle" class="shape-btn active-shape">🔴 圆形</button>
+                    <button data-shape="square" class="shape-btn">🟫 方形</button>
+                    <button data-shape="heart" class="shape-btn">❤️ 心形</button>
+                    <button data-shape="star" class="shape-btn">⭐ 星形</button>
+                    <button data-shape="ellipse" class="shape-btn">🥚 椭圆</button>
+                </div>
+                
+                <div class="button-group">
+                    <button id="rotateToggleBtn" class="magic-btn">🌀 旋转花环 (OFF)</button>
+                    <button id="colorFlowBtn" class="magic-btn">🌈 彩虹流光 (OFF)</button>
+                    <button id="randomBtn" class="magic-btn">🎲 随机魔法花环 🎲</button>
+                </div>
+                <div class="code-note" style="background:#fae6c3; color:#aa571e; margin-top:12px; font-size:0.7rem;">
+                    ⚡ 点击画布 → 星光爆炸！💖
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-note">
+        🌟 科技节·百变形状工坊 | 循环 + 三角函数 + 动态形状映射 = 会变魔法的花环 🌟
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ---------- 极速画布 ----------
+        const canvas = document.getElementById('wreathCanvas');
+        const ctx = canvas.getContext('2d');
+        const size = 550;
+        canvas.width = size;
+        canvas.height = size;
+        
+        // 核心参数
+        let flowerCount = 14;
+        let ringRadius = 185;
+        let flowerSize = 22;
+        let shapeType = 'circle';
+        
+        // 动画状态
+        let isRotating = false;
+        let isColorFlowing = false;
+        let rotationOffset = 0;
+        let colorTime = 0;
+        let animFrameId = null;
+        
+        // 点击特效
+        let clickGlow = 0;
+        let clickX = size/2, clickY = size/2;
+        
+        // DOM 元素
+        const flowerSlider = document.getElementById('flowerCountSlider');
+        const radiusSlider = document.getElementById('ringRadiusSlider');
+        const sizeSlider = document.getElementById('flowerSizeSlider');
+        const flowerVal = document.getElementById('flowerCountVal');
+        const radiusVal = document.getElementById('ringRadiusVal');
+        const sizeVal = document.getElementById('flowerSizeVal');
+        const randomBtn = document.getElementById('randomBtn');
+        const rotateToggleBtn = document.getElementById('rotateToggleBtn');
+        const colorFlowBtn = document.getElementById('colorFlowBtn');
+        const codeDisplay = document.getElementById('codeDisplay');
+        const shapeBtns = document.querySelectorAll('.shape-btn');
+        
+        // 形状映射函数
+        function getShapePoint(shape, angle, cx, cy, baseRadius, index = 0) {
+            if (shape === 'circle') {
+                return { x: cx + Math.cos(angle) * baseRadius, y: cy + Math.sin(angle) * baseRadius };
+            }
+            else if (shape === 'square') {
+                const cosA = Math.cos(angle);
+                const sinA = Math.sin(angle);
+                const k = baseRadius / Math.max(Math.abs(cosA), Math.abs(sinA));
+                return { x: cx + k * cosA, y: cy + k * sinA };
+            }
+            else if (shape === 'heart') {
+                const t = angle;
+                const scale = baseRadius / 17.5;
+                let xRaw = 16 * Math.pow(Math.sin(t), 3);
+                let yRaw = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t);
+                yRaw = -yRaw;  // 心形尖端向下
+                return { x: cx + xRaw * scale, y: cy + yRaw * scale * 0.95 };
+            }
+            else if (shape === 'star') {
+                let rVariation = 0.28 * Math.cos(5 * angle);
+                let rad = baseRadius * (0.82 + rVariation);
+                return { x: cx + Math.cos(angle) * rad, y: cy + Math.sin(angle) * rad };
+            }
+            else if (shape === 'ellipse') {
+                let rx = baseRadius * 1.25;
+                let ry = baseRadius * 0.85;
+                return { x: cx + Math.cos(angle) * rx, y: cy + Math.sin(angle) * ry };
+            }
+            return { x: cx + Math.cos(angle) * baseRadius, y: cy + Math.sin(angle) * baseRadius };
+        }
+        
+        function drawShapeOutline(shape, cx, cy, baseRadius) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.setLineDash([8, 12]);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#b8a06e';
+            ctx.shadowBlur = 0;
+            const steps = 100;
+            if (shape === 'circle') {
+                ctx.arc(cx, cy, baseRadius, 0, Math.PI * 2);
+                ctx.stroke();
+            } 
+            else if (shape === 'square') {
+                const half = baseRadius;
+                ctx.rect(cx - half, cy - half, half * 2, half * 2);
+                ctx.stroke();
+            }
+            else if (shape === 'heart') {
+                for (let i = 0; i <= steps; i++) {
+                    let t = (i / steps) * Math.PI * 2;
+                    let scale = baseRadius / 17.5;
+                    let xRaw = 16 * Math.pow(Math.sin(t), 3);
+                    let yRaw = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t);
+                    yRaw = -yRaw;
+                    let x = cx + xRaw * scale;
+                    let y = cy + yRaw * scale * 0.95;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+            else if (shape === 'star') {
+                for (let i = 0; i <= steps; i++) {
+                    let angle = (i / steps) * Math.PI * 2;
+                    let r = baseRadius * (0.82 + 0.28 * Math.cos(5 * angle));
+                    let x = cx + Math.cos(angle) * r;
+                    let y = cy + Math.sin(angle) * r;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+            else if (shape === 'ellipse') {
+                let rx = baseRadius * 1.25;
+                let ry = baseRadius * 0.85;
+                ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            for(let i=0;i<24;i++) {
+                let ang = (i/24)*Math.PI*2;
+                let p = getShapePoint(shape, ang, cx, cy, baseRadius, i);
+                ctx.moveTo(p.x, p.y);
+                ctx.arc(p.x, p.y, 2.2, 0, Math.PI*2);
+            }
+            ctx.fillStyle = `rgba(255,210,120,0.5)`;
+            ctx.fill();
+            ctx.restore();
+        }
+        
+        function drawFlower(x, y, petalSize, baseHue, flowShift) {
+            ctx.save();
+            ctx.translate(x, y);
+            let finalHue = (baseHue + (isColorFlowing ? flowShift : 0)) % 360;
+            // 叶子
+            ctx.beginPath();
+            ctx.ellipse(-petalSize*0.4, petalSize*0.52, petalSize*0.32, petalSize*0.22, -0.5, 0, Math.PI*2);
+            ctx.fillStyle = '#8bd96a';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(petalSize*0.4, petalSize*0.52, petalSize*0.32, petalSize*0.22, 0.5, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(-petalSize*0.55, -petalSize*0.3, petalSize*0.28, petalSize*0.2, -0.2, 0, Math.PI*2);
+            ctx.fillStyle = '#a3f07a';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(petalSize*0.55, -petalSize*0.3, petalSize*0.28, petalSize*0.2, 0.2, 0, Math.PI*2);
+            ctx.fill();
+            
+            const angleStep = (Math.PI * 2) / 5;
+            const petalRadius = petalSize * 0.76;
+            for (let i = 0; i < 5; i++) {
+                const ang = i * angleStep;
+                const px = Math.cos(ang) * petalRadius;
+                const py = Math.sin(ang) * petalRadius;
+                ctx.beginPath();
+                ctx.arc(px, py, petalSize * 0.47, 0, Math.PI * 2);
+                let sat = isColorFlowing ? 88 : 84;
+                ctx.fillStyle = `hsl(${finalHue + i * 8}, ${sat}%, 68%)`;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(px - 2, py - 2, petalSize*0.08, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255, 245, 170, 0.8)`;
+                ctx.fill();
+            }
+            ctx.beginPath();
+            ctx.arc(0, 0, petalSize * 0.42, 0, Math.PI * 2);
+            ctx.fillStyle = `hsl(${finalHue + 25}, 92%, 68%)`;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(0, 0, petalSize * 0.28, 0, Math.PI * 2);
+            ctx.fillStyle = `hsl(45, 94%, 70%)`;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(0, 0, petalSize * 0.14, 0, Math.PI * 2);
+            ctx.fillStyle = `#ffbb66`;
+            ctx.fill();
+            for(let s=0; s<3; s++){
+                ctx.beginPath();
+                ctx.arc(s*2.2-2.2, -2.5, 1.2, 0, Math.PI*2);
+                ctx.fillStyle = "#ffefb0";
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+        
+        let starTime = 0;
+        function drawSparkles(cx, cy, radius) {
+            starTime = (starTime + 0.02) % (Math.PI*2);
+            ctx.save();
+            for(let i=0; i<28; i++) {
+                let angle = (i * 27.3 + starTime) % (Math.PI*2);
+                let r = radius + Math.sin(i + starTime) * 10;
+                let x = cx + Math.cos(angle) * (r + 4);
+                let y = cy + Math.sin(angle) * (r + 3);
+                let tw = 0.5 + Math.sin(starTime * 1.5 + i) * 0.3;
+                ctx.beginPath();
+                ctx.arc(x, y, 1.6 + Math.sin(starTime + i)*0.7, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255,215,100, ${0.5 + tw*0.3})`;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+        
+        function drawExtraBuds(cx, cy, radius) {
+            const budCount = Math.max(5, Math.floor(flowerCount * 0.5));
+            for (let i = 0; i < budCount; i++) {
+                let angle = (i / budCount) * Math.PI * 2 + rotationOffset * 0.3;
+                let basePoint = getShapePoint(shapeType, angle, cx, cy, radius, i);
+                let offsetDir = angle;
+                let offsetMagn = (i % 2 === 0 ? 10 : -8);
+                let x = basePoint.x + Math.cos(offsetDir) * offsetMagn;
+                let y = basePoint.y + Math.sin(offsetDir) * offsetMagn;
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.beginPath();
+                ctx.arc(0, 0, flowerSize*0.3, 0, Math.PI*2);
+                let hueBud = (angle * 90 + colorTime) % 360;
+                ctx.fillStyle = `hsl(${hueBud}, 80%, 70%)`;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(1.5, -1.5, flowerSize*0.1, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255,240,130,0.9)`;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        function drawWreath() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, size, size);
+            const grad = ctx.createLinearGradient(0, 0, size, size);
+            grad.addColorStop(0, '#fff3e2');
+            grad.addColorStop(1, '#ffebd2');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, size, size);
+            
+            const cx = size/2;
+            const cy = size/2;
+            const baseR = Math.min(ringRadius, size/2 - 28);
+            
+            drawShapeOutline(shapeType, cx, cy, baseR);
+            drawSparkles(cx, cy, baseR);
+            
+            const step = (Math.PI * 2) / flowerCount;
+            for (let i = 0; i < flowerCount; i++) {
+                let angle = i * step + (isRotating ? rotationOffset : 0);
+                let point = getShapePoint(shapeType, angle, cx, cy, baseR, i);
+                let x = point.x, y = point.y;
+                let hueBase = (angle * 160 / Math.PI + flowerCount * 5) % 360;
+                let dynamicSize = flowerSize;
+                if(i % 4 === 0) dynamicSize = flowerSize * 1.04;
+                if(i % 6 === 0) dynamicSize = flowerSize * 0.96;
+                drawFlower(x, y, dynamicSize, hueBase, colorTime);
+            }
+            
+            drawExtraBuds(cx, cy, baseR);
+            
+            const breathe = Math.sin(Date.now() * 0.004) * 1.5;
+            ctx.save();
+            ctx.font = `bold ${Math.floor(size/12)}px "Comic Neue", cursive`;
+            ctx.fillStyle = '#c27936';
+            ctx.fillText("🌸", cx-18, cy+10);
+            ctx.font = `bold ${Math.floor(size/19)}px "Segoe UI", cursive`;
+            ctx.fillStyle = '#be732e';
+            ctx.fillText("百变环", cx-28, cy-22);
+            ctx.fillStyle = '#a5591f';
+            ctx.fillText("魔法秀", cx+10, cy+46);
+            ctx.beginPath();
+            ctx.arc(cx, cy, 18 + breathe*0.4, 0, Math.PI*2);
+            ctx.fillStyle = '#ffdd99';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx-4, cy-4, 4.5, 0, Math.PI*2);
+            ctx.fillStyle = '#fff3bf';
+            ctx.fill();
+            ctx.restore();
+            
+            if(clickGlow > 0.02) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(clickX, clickY, 38 * clickGlow, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255, 210, 90, ${clickGlow * 0.55})`;
+                ctx.fill();
+                for(let g=0;g<6;g++) {
+                    let radAng = (Date.now() * 0.012 + g) * Math.PI*2/6;
+                    let dx = Math.cos(radAng) * 22 * clickGlow;
+                    let dy = Math.sin(radAng) * 22 * clickGlow;
+                    ctx.beginPath();
+                    ctx.arc(clickX + dx, clickY + dy, 5 * clickGlow, 0, Math.PI*2);
+                    ctx.fillStyle = `rgba(255, 190, 60, ${clickGlow * 0.7})`;
+                    ctx.fill();
+                }
+                ctx.restore();
+                clickGlow *= 0.92;
+                if(clickGlow < 0.02) clickGlow = 0;
+            }
+        }
+        
+        function animate() {
+            if(isRotating) {
+                rotationOffset += 0.0075;
+                if(rotationOffset > Math.PI*2) rotationOffset -= Math.PI*2;
+            }
+            if(isColorFlowing) {
+                colorTime += 1.1;
+                if(colorTime > 360) colorTime -= 360;
+            }
+            drawWreath();
+            animFrameId = requestAnimationFrame(animate);
+        }
+        
+        function updateParams() {
+            flowerCount = parseInt(flowerSlider.value, 10);
+            ringRadius = parseInt(radiusSlider.value, 10);
+            flowerSize = parseInt(sizeSlider.value, 10);
+            flowerVal.innerText = flowerCount + "朵";
+            radiusVal.innerText = ringRadius + "px";
+            sizeVal.innerText = flowerSize + "px";
+            updateCodeDisplay();
+        }
+        
+        function setShape(shape) {
+            shapeType = shape;
+            shapeBtns.forEach(btn => {
+                if(btn.dataset.shape === shape) btn.classList.add('active-shape');
+                else btn.classList.remove('active-shape');
+            });
+            updateCodeDisplay();
+            canvas.style.transform = "scale(0.99)";
+            setTimeout(()=>{ canvas.style.transform = "scale(1)"; }, 80);
+        }
+        
+        function randomMagic() {
+            flowerSlider.value = Math.floor(Math.random() * 20) + 8;
+            radiusSlider.value = Math.floor(Math.random() * 100) + 140;
+            sizeSlider.value = Math.floor(Math.random() * 20) + 15;
+            updateParams();
+            const shapes = ['circle', 'square', 'heart', 'star', 'ellipse'];
+            const randShape = shapes[Math.floor(Math.random() * shapes.length)];
+            setShape(randShape);
+            clickGlow = 0.8;
+            clickX = size/2;
+            clickY = size/2;
+            setTimeout(()=>{ clickGlow = 0.6; }, 30);
+        }
+        
+        function toggleRotate() {
+            isRotating = !isRotating;
+            rotateToggleBtn.innerHTML = isRotating ? "🌀 旋转花环 (ON)" : "🌀 旋转花环 (OFF)";
+            if(isRotating) rotateToggleBtn.classList.add("active-magic");
+            else rotateToggleBtn.classList.remove("active-magic");
+            updateCodeDisplay();
+        }
+        
+        function toggleColorFlow() {
+            isColorFlowing = !isColorFlowing;
+            colorFlowBtn.innerHTML = isColorFlowing ? "🌈 彩虹流光 (ON)" : "🌈 彩虹流光 (OFF)";
+            if(isColorFlowing) colorFlowBtn.classList.add("active-magic");
+            else colorFlowBtn.classList.remove("active-magic");
+            if(!isColorFlowing) colorTime = 0;
+            updateCodeDisplay();
+        }
+        
+        function handleCanvasTap(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if(e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            let canvasX = (clientX - rect.left) * scaleX;
+            let canvasY = (clientY - rect.top) * scaleY;
+            canvasX = Math.min(Math.max(15, canvasX), size-15);
+            canvasY = Math.min(Math.max(15, canvasY), size-15);
+            clickGlow = 1.0;
+            clickX = canvasX;
+            clickY = canvasY;
+            canvas.style.transform = "scale(0.98)";
+            setTimeout(()=>{ canvas.style.transform = "scale(1)"; }, 80);
+        }
+        
+        function updateCodeDisplay() {
+            const shapeName = {circle:'圆形', square:'方形', heart:'心形', star:'星形', ellipse:'椭圆'}[shapeType];
+            const rotateStatus = isRotating ? "✨ 旋转开启" : "🌀 静止";
+            const colorStatus = isColorFlowing ? "🌈 流光模式" : "🌸 固定花色";
+            codeDisplay.innerText = `🎭 当前形状：${shapeName}
+🌸 花朵=${flowerCount}  🌿尺寸=${ringRadius}  ⭐大小=${flowerSize}
+
+${rotateStatus}  +  ${colorStatus}
+
+✨ 点击形状按钮立刻变换！
+心形+旋转+流光 → 超梦幻~`;
+        }
+        
+        function bindEvents() {
+            flowerSlider.addEventListener('input', updateParams);
+            radiusSlider.addEventListener('input', updateParams);
+            sizeSlider.addEventListener('input', updateParams);
+            randomBtn.addEventListener('click', randomMagic);
+            rotateToggleBtn.addEventListener('click', toggleRotate);
+            colorFlowBtn.addEventListener('click', toggleColorFlow);
+            canvas.addEventListener('click', handleCanvasTap);
+            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleCanvasTap(e); });
+            shapeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setShape(btn.dataset.shape);
+                });
+            });
+        }
+        
+        function init() {
+            bindEvents();
+            updateParams();
+            setShape('circle');
+            updateCodeDisplay();
+            animate();
+            drawWreath();
+        }
+        
+        init();
+    })();
+</script>
+</body>
+</html>
