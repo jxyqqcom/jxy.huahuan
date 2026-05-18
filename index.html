@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🎮 爱心花环挑战赛 · 科技节编程游戏 🎮</title>
+    <title>🎯 10关挑战 · 花环大师 | 科技节编程游戏 🎯</title>
     <style>
         * {
             margin: 0;
@@ -11,98 +11,120 @@
             box-sizing: border-box;
         }
         body {
-            background: #e6c9a8;
+            background: #dbb87c;
             font-family: 'Comic Neue', 'Segoe UI', monospace;
-            padding: 20px;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
         }
-        .game-container {
-            max-width: 1150px;
-            width: 100%;
-            background: #fffcf0;
-            border-radius: 56px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-            overflow: hidden;
+        .game-full {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #e6cfaa;
+        }
+        .game-main {
+            flex: 1;
             display: flex;
             flex-wrap: wrap;
+            overflow: auto;
         }
         .rules-area {
-            flex: 1.2;
+            flex: 1;
+            min-width: 280px;
             background: #1f3d33;
-            padding: 24px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             border-right: 5px solid #ffbc70;
         }
         .play-area {
-            flex: 1.8;
+            flex: 1.5;
             background: #fff7ec;
-            padding: 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 18px;
+            justify-content: center;
+            gap: 20px;
         }
         h2 {
             color: #ffe1aa;
             font-size: 1.6rem;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
         .rule-card {
             background: #0a241e;
             border-radius: 32px;
-            padding: 16px;
+            padding: 18px;
             color: #daf4e8;
             margin-bottom: 20px;
         }
         .rule-card h3 {
             color: #ffcd94;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
         }
         .rule-card p {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             line-height: 1.4;
         }
         .target-box {
             background: #2e624b;
             border-radius: 28px;
-            padding: 16px;
+            padding: 18px;
             text-align: center;
-            margin-top: 20px;
+            margin: 15px 0;
         }
         .target-box span {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             background: #ffdd99;
             display: inline-block;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 40px;
             margin: 5px;
             color: #5a2a0c;
         }
-        .score {
-            font-size: 1.5rem;
+        .target-style {
+            background: #ffaa66;
+            color: #3a1c00;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .score, .level {
+            font-size: 1.3rem;
             font-weight: bold;
             background: #ffbc6e;
             display: inline-block;
-            padding: 6px 18px;
+            padding: 8px 18px;
             border-radius: 60px;
             color: #2c1a09;
+            text-align: center;
+            flex: 1;
         }
         canvas {
             background: #fffef5;
             border-radius: 48px;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             aspect-ratio: 1/1;
+            cursor: pointer;
         }
         .controls {
             background: #fdedd4;
-            border-radius: 40px;
-            padding: 14px;
+            border-radius: 48px;
+            padding: 18px 20px;
             width: 100%;
+            max-width: 480px;
             text-align: center;
         }
         .row {
@@ -110,16 +132,16 @@
             gap: 12px;
             justify-content: space-between;
             align-items: center;
-            margin: 10px 0;
+            margin: 12px 0;
             flex-wrap: wrap;
         }
         .row label {
             font-weight: bold;
             color: #a24b13;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
         input {
-            width: 150px;
+            width: 160px;
             accent-color: #f2851c;
         }
         select, button {
@@ -133,118 +155,150 @@
         }
         button {
             background: #f5a23d;
-            padding: 6px 18px;
+            padding: 8px 20px;
+            transition: 0.05s linear;
+        }
+        button:active {
+            transform: scale(0.97);
         }
         .value {
             background: #fed698;
             border-radius: 30px;
-            padding: 0 10px;
-            font-size: 0.7rem;
+            padding: 0 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
         }
         .match-btn {
             background: #4cae4c;
             color: white;
-            margin-top: 8px;
+            margin-top: 12px;
             width: 100%;
-            padding: 8px;
+            padding: 10px;
+            font-size: 1rem;
+        }
+        .message {
+            font-size: 0.8rem;
+            margin-top: 10px;
+            padding: 6px;
+            border-radius: 60px;
+            background: #fff0db;
+            color: #b9591a;
+        }
+        .reward {
+            animation: glow 0.8s ease-in-out 3;
+        }
+        @keyframes glow {
+            0% { text-shadow: 0 0 0 gold; }
+            50% { text-shadow: 0 0 12px gold; }
+            100% { text-shadow: 0 0 0 gold; }
         }
         footer {
-            background: #f2e1ca;
+            background: #d8bd8b;
             text-align: center;
-            font-size: 0.65rem;
-            padding: 6px;
-            color: #9a511f;
+            font-size: 0.7rem;
+            padding: 8px;
+            color: #5a3513;
         }
         @media (max-width: 750px) {
             .rules-area { border-right: none; border-bottom: 5px solid #ffbc70; }
+            .stats { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-<div class="game-container">
-    <!-- 左侧：游戏规则 + 目标 -->
-    <div class="rules-area">
-        <h2>🎯 游戏规则</h2>
-        <div class="rule-card">
-            <h3>✨ 花环设计师挑战 ✨</h3>
-            <p>1️⃣ 右侧会随机出现“目标花环参数”（花朵数量、爱心大小、花瓣大小）。<br>
-            2️⃣ 你使用下方的滑块调整花环，让花环和目标的三个数值完全一致！<br>
-            3️⃣ 调整好后点击【✅ 匹配花环】按钮，如果全部匹配则+10分，并刷新下一个挑战！<br>
-            4️⃣ 如果不匹配，会提示差异，继续调整直到成功。<br>
-            5️⃣ 连续挑战，看看你能得多少分！🎉<br>
-            💡 提示：花型可以任意选择，不会影响匹配，但会让花环更漂亮~</p>
+<div class="game-full">
+    <div class="game-main">
+        <!-- 左侧：规则+目标 -->
+        <div class="rules-area">
+            <div>
+                <h2>🏆 10关花环大师 🏆</h2>
+                <div class="rule-card">
+                    <h3>✨ 挑战规则 ✨</h3>
+                    <p>🎯 共10关，每关需要匹配4个目标：<br>
+                    <strong>🌸花朵数 ❤️爱心大小 🌼花瓣大小 🎨花型</strong><br>
+                    🔧 用右侧滑块和花型选择器调整你的花环。<br>
+                    ✅ 完全匹配后点击【匹配闯关】→ 得10分，进入下一关！<br>
+                    🌟 总分100分获得「花环大师」奖励动画！<br>
+                    💡 花型必须与目标一致（经典/星星/太阳花）。</p>
+                </div>
+                <div class="target-box">
+                    <h3 style="color:#ffdd99;">🎯 第 <span id="levelNum">1</span> / 10 关 目标 🎯</h3>
+                    <div><span>🌸 花朵数: <span id="targetCount">--</span></span></div>
+                    <div><span>❤️ 爱心大小: <span id="targetSize">--</span></span></div>
+                    <div><span>🌼 花瓣大小: <span id="targetPetal">--</span></span></div>
+                    <div><span>🎨 花型: <span id="targetStyle" class="target-style">--</span></span></div>
+                </div>
+                <div class="stats">
+                    <div class="score">⭐ 总分: <span id="scoreValue">0</span> / 100</div>
+                    <div class="level">📌 当前关: <span id="currentLevel">1</span></div>
+                </div>
+            </div>
+            <div style="font-size:0.7rem; background:#2e624b; border-radius:30px; padding:8px; text-align:center; margin-top:15px; color:#ffe0b5;">
+                💻 编程思维：滑块 = 修改变量，匹配所有条件才能过关！
+            </div>
         </div>
-        <div class="target-box">
-            <h3 style="color:#ffdd99;">🏆 当前目标 🏆</h3>
-            <div><span>🌸 花朵数: <span id="targetCount">--</span></span></div>
-            <div><span>❤️ 爱心大小: <span id="targetSize">--</span></span></div>
-            <div><span>🌼 花瓣大小: <span id="targetPetal">--</span></span></div>
-        </div>
-        <div style="text-align: center; margin-top: 20px;">
-            <span class="score">⭐ 得分: <span id="scoreValue">0</span></span>
-        </div>
-        <div class="tip" style="background:#2e624b; color:#ffe0b5; border-radius:30px; padding:8px; margin-top:18px; text-align:center; font-size:0.7rem;">
-            💪 科技小能手：用编程变量匹配目标，锻炼观察力！
-        </div>
-    </div>
 
-    <!-- 右侧：花环 + 控制台 -->
-    <div class="play-area">
-        <canvas id="heartCanvas" width="450" height="450"></canvas>
-        <div class="controls">
-            <div class="row">
-                <label>🌸 花朵数量</label>
-                <input type="range" id="countSlider" min="8" max="28" value="16">
-                <span id="countVal" class="value">16</span>
+        <!-- 右侧：花环操作区 -->
+        <div class="play-area">
+            <canvas id="heartCanvas" width="450" height="450"></canvas>
+            <div class="controls">
+                <div class="row">
+                    <label>🌸 花朵数量</label>
+                    <input type="range" id="countSlider" min="6" max="30" step="1" value="16">
+                    <span id="countVal" class="value">16</span>
+                </div>
+                <div class="row">
+                    <label>❤️ 爱心大小</label>
+                    <input type="range" id="sizeSlider" min="120" max="240" step="1" value="175">
+                    <span id="sizeVal" class="value">175</span>
+                </div>
+                <div class="row">
+                    <label>🌼 花瓣大小</label>
+                    <input type="range" id="petalSlider" min="10" max="32" step="1" value="18">
+                    <span id="petalVal" class="value">18</span>
+                </div>
+                <div class="row">
+                    <label>🎨 花型选择</label>
+                    <select id="styleSelect">
+                        <option value="classic">🌸 经典小花</option>
+                        <option value="star">⭐ 星星花</option>
+                        <option value="sun">🌻 太阳花</option>
+                    </select>
+                    <button id="randomBtn">🎲 随机调整</button>
+                </div>
+                <button id="matchBtn" class="match-btn">✅ 匹配闯关 (得10分)</button>
+                <div id="message" class="message">🎮 第1关！匹配所有目标后点击闯关！</div>
             </div>
-            <div class="row">
-                <label>❤️ 爱心大小</label>
-                <input type="range" id="sizeSlider" min="130" max="220" value="175">
-                <span id="sizeVal" class="value">175</span>
-            </div>
-            <div class="row">
-                <label>🌼 花瓣大小</label>
-                <input type="range" id="petalSlider" min="12" max="28" value="18">
-                <span id="petalVal" class="value">18</span>
-            </div>
-            <div class="row">
-                <label>🎨 花型 (自由选择)</label>
-                <select id="styleSelect">
-                    <option value="classic">🌸 经典小花</option>
-                    <option value="star">⭐ 星星花</option>
-                    <option value="sun">🌻 太阳花</option>
-                </select>
-                <button id="randomBtn">🎲 随机调参</button>
-            </div>
-            <button id="matchBtn" class="match-btn">✅ 匹配花环</button>
-            <div id="message" style="font-size:0.75rem; margin-top:8px; color:#c24d0e;"></div>
         </div>
     </div>
+    <footer>
+        🧪 科技节·编程闯关 | 爱心曲线 + 花型判断 | 挑战10关成为花环大师 🧪
+    </footer>
 </div>
-<footer>🧪 科技节编程游戏 | 调整滑块匹配目标花环，每成功一次+10分！爱心曲线 + 循环代码 = 魔法花环 🧪</footer>
 
 <script>
     (function(){
-        // ---------- 画布元素 ----------
+        // ---------- 画布 ----------
         const canvas = document.getElementById('heartCanvas');
         const ctx = canvas.getContext('2d');
         const size = 450;
         canvas.width = size;
         canvas.height = size;
         
-        // ---------- 玩家当前参数 ----------
+        // ---------- 游戏状态 ----------
         let currentCount = 16;
         let currentHeartSize = 175;
         let currentPetal = 18;
-        let currentStyle = "classic";
+        let currentStyle = "classic";   // 当前玩家花型
         
-        // ---------- 目标参数 (随机生成) ----------
+        // 目标参数 (包含花型)
         let targetCount = 16;
         let targetHeartSize = 175;
         let targetPetal = 18;
+        let targetStyle = "classic";
         
-        // 得分
-        let score = 0;
+        let score = 0;       // 总分 (满分100)
+        let level = 1;       // 当前关卡 1~10
         
         // DOM 元素
         const countSlider = document.getElementById('countSlider');
@@ -261,7 +315,10 @@
         const targetCountSpan = document.getElementById('targetCount');
         const targetSizeSpan = document.getElementById('targetSize');
         const targetPetalSpan = document.getElementById('targetPetal');
+        const targetStyleSpan = document.getElementById('targetStyle');
         const scoreSpan = document.getElementById('scoreValue');
+        const levelNumSpan = document.getElementById('levelNum');
+        const currentLevelSpan = document.getElementById('currentLevel');
         
         // ---------- 爱心曲线函数 ----------
         function heartX(t, s) {
@@ -274,7 +331,7 @@
             return -y * scale;
         }
         
-        // ---------- 三种花型 (简单漂亮) ----------
+        // 三种花型绘图 (与之前相同)
         function drawClassic(x, y, sz, hue) {
             ctx.save();
             ctx.translate(x, y);
@@ -356,7 +413,7 @@
             ctx.restore();
         }
         
-        // 绘制爱心藤蔓 + 光点
+        // 爱心藤蔓装饰
         function drawHeartVine(cx, cy, scale) {
             ctx.save();
             ctx.beginPath();
@@ -373,19 +430,19 @@
             ctx.lineWidth = 3;
             ctx.strokeStyle = "#f3bf83";
             ctx.stroke();
-            for(let i=0; i<50; i++) {
+            for(let i=0; i<55; i++) {
                 let ang = Math.random() * Math.PI*2;
-                let x = cx + heartX(ang, scale + (Math.random()*10-5));
-                let y = cy + heartY(ang, scale + (Math.random()*10-5));
+                let x = cx + heartX(ang, scale + (Math.random()*12-6));
+                let y = cy + heartY(ang, scale + (Math.random()*12-6));
                 ctx.beginPath();
                 ctx.arc(x, y, Math.random()*2+1, 0, Math.PI*2);
-                ctx.fillStyle = `rgba(255,200,110,0.7)`;
+                ctx.fillStyle = `rgba(255,210,110,0.7)`;
                 ctx.fill();
             }
             ctx.restore();
         }
         
-        // 主绘图函数 (根据当前参数)
+        // 主绘图 (根据当前所有参数)
         function drawHeartWreath() {
             ctx.clearRect(0, 0, size, size);
             let grad = ctx.createLinearGradient(0,0,size,size);
@@ -396,10 +453,10 @@
             
             const cx = size/2;
             const cy = size/2 - 5;
-            let safeScale = Math.min(currentHeartSize, 210);
+            let safeScale = Math.min(currentHeartSize, 220);
             drawHeartVine(cx, cy, safeScale);
             
-            let step = (Math.PI * 2) / currentCount;
+            let step = (Math.PI * 2) / Math.max(1, currentCount);
             for(let i = 0; i < currentCount; i++) {
                 let t = i * step;
                 let x = cx + heartX(t, safeScale);
@@ -409,24 +466,151 @@
                 else if(currentStyle === 'star') drawStar(x, y, currentPetal, hue);
                 else drawSunflower(x, y, currentPetal, hue);
             }
-            // 中心装饰
             ctx.font = `bold ${Math.floor(size/22)}px "Comic Neue"`;
             ctx.fillStyle = "#c06d34";
-            ctx.fillText("❤️ 爱心花环 ❤️", cx-98, cy+58);
-            ctx.font = `${Math.floor(size/30)}px monospace`;
+            ctx.fillText(`第 ${level}/10 关`, cx-48, cy+62);
+            ctx.font = `${Math.floor(size/32)}px monospace`;
             ctx.fillStyle = "#aa5826";
-            ctx.fillText("game challenge", cx-55, cy-48);
+            ctx.fillText("❤️ 花环挑战 ❤️", cx-75, cy-42);
             ctx.beginPath();
-            ctx.arc(cx, cy, 18, 0, Math.PI*2);
+            ctx.arc(cx, cy, 20, 0, Math.PI*2);
             ctx.fillStyle = "#ffe3aa";
             ctx.fill();
             ctx.fillStyle = "#f3872c";
-            ctx.font = "18px monospace";
-            ctx.fillText("🎮", cx-7, cy+7);
+            ctx.font = "20px monospace";
+            ctx.fillText("🎯", cx-8, cy+8);
         }
         
-        // ---------- 刷新UI并重绘 ----------
-        function updateFromSliders() {
+        // ---------- 根据关卡生成目标 (1~10关，范围逐渐增大，花型随机) ----------
+        function getRangeByLevel(lvl) {
+            let countMin = 8, countMax = 24;
+            let sizeMin = 120, sizeMax = 220;
+            let petalMin = 14, petalMax = 26;
+            let extra = Math.floor((lvl-1) / 3);  // 每3关增加难度
+            countMin = Math.max(6, countMin - extra);
+            countMax = Math.min(34, countMax + extra*2);
+            sizeMin = Math.max(110, sizeMin - extra*5);
+            sizeMax = Math.min(250, sizeMax + extra*8);
+            petalMin = Math.max(10, petalMin - extra);
+            petalMax = Math.min(36, petalMax + extra*2);
+            return { countMin, countMax, sizeMin, sizeMax, petalMin, petalMax };
+        }
+        
+        // 随机生成新目标 (第1~10关)
+        function generateNewTarget() {
+            let range = getRangeByLevel(level);
+            let newCount = Math.floor(Math.random() * (range.countMax - range.countMin + 1)) + range.countMin;
+            let newSize = Math.floor(Math.random() * (range.sizeMax - range.sizeMin + 1)) + range.sizeMin;
+            let newPetal = Math.floor(Math.random() * (range.petalMax - range.petalMin + 1)) + range.petalMin;
+            // 随机花型 (0:classic,1:star,2:sun)
+            let styleIdx = Math.floor(Math.random() * 3);
+            let newStyle = styleIdx === 0 ? "classic" : (styleIdx === 1 ? "star" : "sun");
+            targetCount = newCount;
+            targetHeartSize = newSize;
+            targetPetal = newPetal;
+            targetStyle = newStyle;
+            // 更新UI
+            targetCountSpan.innerText = targetCount;
+            targetSizeSpan.innerText = targetHeartSize;
+            targetPetalSpan.innerText = targetPetal;
+            let styleName = targetStyle === "classic" ? "🌸 经典小花" : (targetStyle === "star" ? "⭐ 星星花" : "🌻 太阳花");
+            targetStyleSpan.innerText = styleName;
+        }
+        
+        // 闯关成功 -> 进入下一关
+        function passLevel() {
+            if (level < 10) {
+                level++;
+                levelNumSpan.innerText = level;
+                currentLevelSpan.innerText = level;
+                generateNewTarget();     // 生成新目标（难度递增）
+                messageDiv.innerHTML = `🎉 过关！进入第 ${level} 关！新目标出现，继续挑战~ 🎉`;
+                messageDiv.style.color = "#2c6e2c";
+                drawHeartWreath();
+            } else {
+                // 已通关 10 关，总分应该满分 100，显示奖励
+                messageDiv.innerHTML = "🏆✨ 恭喜你成为花环大师！满分通关！ ✨🏆";
+                messageDiv.style.color = "#d48d2b";
+                messageDiv.classList.add("reward");
+                setTimeout(() => messageDiv.classList.remove("reward"), 2000);
+                // 显示最终奖励弹框（也可在消息中）
+                alert("🎉🎉🎉 恭喜你完成了10关挑战！获得「花环大师」称号！ 🎉🎉🎉");
+            }
+        }
+        
+        // 检查匹配 (四个条件)
+        function isFullyMatched() {
+            return (currentCount === targetCount &&
+                    currentHeartSize === targetHeartSize &&
+                    currentPetal === targetPetal &&
+                    currentStyle === targetStyle);
+        }
+        
+        // 匹配并闯关 (得分逻辑)
+        function checkAndPass() {
+            // 如果已经通关 (level >10 或 score>=100)
+            if (level > 10 || score >= 100) {
+                messageDiv.innerHTML = "🏁 你已经通关啦！刷新页面可重新挑战 🏁";
+                return;
+            }
+            
+            if (isFullyMatched()) {
+                // 每关加10分，但确保不超过100
+                let addScore = 10;
+                let newScore = score + addScore;
+                if (newScore > 100) newScore = 100;
+                score = newScore;
+                scoreSpan.innerText = score;
+                
+                if (score === 100) {
+                    messageDiv.innerHTML = "🎉 满分100分！花环大师！奖励特效开启 🎉";
+                    messageDiv.style.color = "#ffaa33";
+                    messageDiv.classList.add("reward");
+                    setTimeout(() => messageDiv.classList.remove("reward"), 1500);
+                    alert("🎉✨ 太棒了！你获得了100分，成为花环大师！ ✨🎉");
+                    // 如果还没到第10关但分数已达100，也停止后续过关
+                    if (level <= 10) {
+                        // 显示通关完成
+                        level = 11; // 标记结束
+                        levelNumSpan.innerText = "终";
+                        currentLevelSpan.innerText = "通关";
+                    }
+                    drawHeartWreath();
+                    return;
+                }
+                
+                // 未满分情况下，进入下一关
+                if (level < 10) {
+                    passLevel();
+                } else {
+                    // 已经是第10关且匹配成功且未满分（实际上第10关成功后会加10到100分，但以防万一）
+                    if (score === 100) {
+                        // 上面已处理
+                    } else {
+                        // 理论不会出现，但兜底
+                        score = 100;
+                        scoreSpan.innerText = score;
+                        messageDiv.innerHTML = "🎉 恭喜通关！满分达成！🎉";
+                    }
+                }
+                drawHeartWreath();
+            } else {
+                // 未匹配，提示哪些不符合
+                let diff = [];
+                if(currentCount !== targetCount) diff.push(`花朵数(${currentCount}≠${targetCount})`);
+                if(currentHeartSize !== targetHeartSize) diff.push(`爱心大小(${currentHeartSize}≠${targetHeartSize})`);
+                if(currentPetal !== targetPetal) diff.push(`花瓣大小(${currentPetal}≠${targetPetal})`);
+                if(currentStyle !== targetStyle) {
+                    let styleTargetName = targetStyle === "classic" ? "经典小花" : (targetStyle === "star" ? "星星花" : "太阳花");
+                    diff.push(`花型(当前${styleSelect.options[styleSelect.selectedIndex]?.text}≠${styleTargetName})`);
+                }
+                messageDiv.innerHTML = `❌ 未匹配：${diff.join(', ')}，调整后再闯关！`;
+                messageDiv.style.color = "#c24d0e";
+            }
+        }
+        
+        // 滑块/选择器更新当前花环
+        function updateFromUI() {
             currentCount = parseInt(countSlider.value);
             currentHeartSize = parseInt(sizeSlider.value);
             currentPetal = parseInt(petalSlider.value);
@@ -435,123 +619,83 @@
             sizeSpan.innerText = currentHeartSize;
             petalSpan.innerText = currentPetal;
             drawHeartWreath();
-            // 实时显示匹配提示（可选）
-            checkMatchMessage(false);
-        }
-        
-        // 检查是否匹配 (如果isMatchAction为true则表示是点击匹配按钮)
-        function checkMatchMessage(isAction) {
-            let countMatch = (currentCount === targetCount);
-            let sizeMatch = (currentHeartSize === targetHeartSize);
-            let petalMatch = (currentPetal === targetPetal);
-            if (countMatch && sizeMatch && petalMatch) {
-                if(isAction) {
-                    // 匹配成功！
-                    score += 10;
-                    scoreSpan.innerText = score;
-                    messageDiv.innerHTML = "🎉 完美匹配！ +10分！ 刷新新目标 🎉";
-                    messageDiv.style.color = "#2c6e2c";
-                    generateNewTarget();  // 刷新目标
-                    updateFromSliders();   // 重绘花环
-                } else {
-                    // 滑块实时变化时，如果正好匹配，显示“就绪”提示
-                    messageDiv.innerHTML = "✅ 参数已匹配目标！点击【匹配花环】得分！";
-                    messageDiv.style.color = "#2c6e2c";
-                }
-                return true;
+            // 实时提示：如果完全匹配则提示可以闯关
+            if (isFullyMatched()) {
+                messageDiv.innerHTML = `🎯 完美！所有参数匹配第 ${level} 关目标，点击「匹配闯关」得10分！`;
+                messageDiv.style.color = "#2c6e2c";
             } else {
-                if(isAction) {
-                    let diff = [];
-                    if(!countMatch) diff.push(`花朵数(${currentCount}≠${targetCount})`);
-                    if(!sizeMatch) diff.push(`爱心大小(${currentHeartSize}≠${targetHeartSize})`);
-                    if(!petalMatch) diff.push(`花瓣大小(${currentPetal}≠${targetPetal})`);
-                    messageDiv.innerHTML = `❌ 不匹配：${diff.join(', ')}，继续调整滑块！`;
-                    messageDiv.style.color = "#c24d0e";
-                } else {
-                    // 不显示红字打扰，但可清空提示
-                    if(!(currentCount===targetCount && currentHeartSize===targetHeartSize && currentPetal===targetPetal)) {
-                        messageDiv.innerHTML = "🎯 调整滑块，和目标一致后点击【匹配花环】加分！";
-                        messageDiv.style.color = "#a55a1a";
-                    }
+                if(!messageDiv.innerHTML.includes("未匹配") && !messageDiv.innerHTML.includes("过关") && !messageDiv.innerHTML.includes("完美")) {
+                    messageDiv.innerHTML = `🔧 当前第 ${level} 关，调整滑块和花型，全部匹配后闯关~`;
+                    messageDiv.style.color = "#b9591a";
                 }
-                return false;
             }
         }
         
-        // 生成随机新目标 (在合理范围内)
-        function generateNewTarget() {
-            // 确保目标和当前不同（增加趣味）
-            let newCount, newSize, newPetal;
-            do {
-                newCount = Math.floor(Math.random() * 20) + 9;   // 9~28
-                newSize = Math.floor(Math.random() * 85) + 140;  // 140~224
-                newPetal = Math.floor(Math.random() * 15) + 14;  // 14~28
-            } while (newCount === currentCount && newSize === currentHeartSize && newPetal === currentPetal);
-            targetCount = newCount;
-            targetHeartSize = newSize;
-            targetPetal = newPetal;
-            targetCountSpan.innerText = targetCount;
-            targetSizeSpan.innerText = targetHeartSize;
-            targetPetalSpan.innerText = targetPetal;
-            messageDiv.innerHTML = "🎯 新目标出现！调整滑块匹配它吧！";
-            messageDiv.style.color = "#b95c1c";
-        }
-        
-        // 点击匹配按钮的逻辑
-        function onMatch() {
-            checkMatchMessage(true);
-        }
-        
-        // 随机参数 (不影响目标，只是帮助玩家快速调整)
+        // 随机调整当前花环（方便探索）
         function randomCurrent() {
-            currentCount = Math.floor(Math.random() * 20) + 9;
-            currentHeartSize = Math.floor(Math.random() * 85) + 140;
-            currentPetal = Math.floor(Math.random() * 15) + 14;
+            let range = getRangeByLevel(level);
+            currentCount = Math.floor(Math.random() * (range.countMax - range.countMin + 1)) + range.countMin;
+            currentHeartSize = Math.floor(Math.random() * (range.sizeMax - range.sizeMin + 1)) + range.sizeMin;
+            currentPetal = Math.floor(Math.random() * (range.petalMax - range.petalMin + 1)) + range.petalMin;
+            // 随机花型
+            let r = Math.floor(Math.random() * 3);
+            currentStyle = r === 0 ? "classic" : (r === 1 ? "star" : "sun");
             countSlider.value = currentCount;
             sizeSlider.value = currentHeartSize;
             petalSlider.value = currentPetal;
-            updateFromSliders();
-            messageDiv.innerHTML = "🎲 随机调整了当前花环，继续挑战目标吧！";
+            styleSelect.value = currentStyle;
+            updateFromUI();
+            messageDiv.innerHTML = `🎲 随机调整了花环，试试匹配第 ${level} 关目标！`;
             messageDiv.style.color = "#a55a1a";
         }
         
-        // 初始化新游戏 (重置得分, 随机目标)
+        // 初始化游戏 (第1关)
         function initGame() {
+            level = 1;
             score = 0;
+            levelNumSpan.innerText = level;
+            currentLevelSpan.innerText = level;
             scoreSpan.innerText = "0";
-            // 随机生成初始目标
-            targetCount = Math.floor(Math.random() * 20) + 9;
-            targetHeartSize = Math.floor(Math.random() * 85) + 140;
-            targetPetal = Math.floor(Math.random() * 15) + 14;
+            // 生成第1关目标
+            let range = getRangeByLevel(1);
+            targetCount = Math.floor(Math.random() * (range.countMax - range.countMin + 1)) + range.countMin;
+            targetHeartSize = Math.floor(Math.random() * (range.sizeMax - range.sizeMin + 1)) + range.sizeMin;
+            targetPetal = Math.floor(Math.random() * (range.petalMax - range.petalMin + 1)) + range.petalMin;
+            let initStyleIdx = Math.floor(Math.random() * 3);
+            targetStyle = initStyleIdx === 0 ? "classic" : (initStyleIdx === 1 ? "star" : "sun");
             targetCountSpan.innerText = targetCount;
             targetSizeSpan.innerText = targetHeartSize;
             targetPetalSpan.innerText = targetPetal;
-            // 设置当前滑块为合理初值（不一定匹配）
-            currentCount = 14;
-            currentHeartSize = 170;
-            currentPetal = 18;
+            let styleName = targetStyle === "classic" ? "🌸 经典小花" : (targetStyle === "star" ? "⭐ 星星花" : "🌻 太阳花");
+            targetStyleSpan.innerText = styleName;
+            
+            // 设置当前花环初始值（接近但不等于目标，增加挑战）
+            currentCount = Math.min(Math.max(targetCount - 2, range.countMin), range.countMax);
+            currentHeartSize = Math.min(Math.max(targetHeartSize - 10, range.sizeMin), range.sizeMax);
+            currentPetal = Math.min(Math.max(targetPetal - 2, range.petalMin), range.petalMax);
+            if(currentCount === targetCount) currentCount = Math.min(targetCount+1, range.countMax);
+            if(currentHeartSize === targetHeartSize) currentHeartSize = Math.min(targetHeartSize+8, range.sizeMax);
+            if(currentPetal === targetPetal) currentPetal = Math.min(targetPetal+1, range.petalMax);
+            // 随机花型初始不同
+            let otherStyles = ["classic","star","sun"].filter(s => s !== targetStyle);
+            currentStyle = otherStyles[Math.floor(Math.random() * otherStyles.length)];
             countSlider.value = currentCount;
             sizeSlider.value = currentHeartSize;
             petalSlider.value = currentPetal;
-            styleSelect.value = "classic";
-            updateFromSliders();
-            messageDiv.innerHTML = "🎮 游戏开始！匹配目标花环，点击【匹配花环】得分！";
-            messageDiv.style.color = "#2c6e2c";
+            styleSelect.value = currentStyle;
+            updateFromUI();
+            messageDiv.innerHTML = "🎮 第1关！调整滑块和花型，完全匹配目标后点击闯关得10分！";
         }
         
-        // 绑定事件
-        function bindEvents() {
-            countSlider.addEventListener('input', updateFromSliders);
-            sizeSlider.addEventListener('input', updateFromSliders);
-            petalSlider.addEventListener('input', updateFromSliders);
-            styleSelect.addEventListener('change', updateFromSliders);
-            randomBtn.addEventListener('click', randomCurrent);
-            matchBtn.addEventListener('click', onMatch);
-        }
+        // 事件绑定
+        countSlider.addEventListener('input', updateFromUI);
+        sizeSlider.addEventListener('input', updateFromUI);
+        petalSlider.addEventListener('input', updateFromUI);
+        styleSelect.addEventListener('change', updateFromUI);
+        randomBtn.addEventListener('click', randomCurrent);
+        matchBtn.addEventListener('click', checkAndPass);
         
-        // 启动游戏
         initGame();
-        bindEvents();
     })();
 </script>
 </body>
